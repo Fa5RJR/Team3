@@ -4,6 +4,9 @@ import 'arm_screen.dart';
 import 'gloves_screen.dart';
 import 'hand_screen.dart';
 import 'leg_screen.dart';
+import 'Aboutus.dart';
+import 'feedback.dart';
+import 'SettingsPage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -101,21 +104,30 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
           ),
         ),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {},
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'settings',
-                child: Text('Settings'.tr()),
-              ),
-              PopupMenuItem(
-                value: 'logout',
-                child: Text('Logout'.tr()),
-              ),
-            ],
-          )
-        ],
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'settings') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Setting()),
+                  );
+                } else if (value == 'logout') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'settings',
+                  child: Text('Settings'.tr()),
+                ),
+
+              ],
+            )
+          ]
       ),
       body: Container(
         color: Colors.white,
@@ -180,6 +192,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 }).toList(),
               ),
             ),
+
+            /////////////
+
+
             Stack(
               alignment: Alignment.center,
               clipBehavior: Clip.none,
@@ -194,49 +210,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.person, size: 40, color: Colors.teal),
-                        onPressed: () {},
+                        icon: Icon(Icons.home, size: 40, color: Colors.teal),
+                        onPressed: () => Navigator.pushNamed(context, "/Sign in"),
                       ),
                       IconButton(
-                        icon: Icon(Icons.save, size: 40, color: Colors.teal),
-                        onPressed: () {},
-                      ),
-                      SizedBox(width: 60),
-                      IconButton(
-                        icon: Icon(Icons.settings, size: 40, color: Colors.teal),
-                        onPressed: () {},
+                        icon: Icon(Icons.info, size: 40, color: Colors.teal),
+                        onPressed: () {
+                          // فتح صفحة About Us
+                        },
                       ),
                       IconButton(
-                        icon: Icon(Icons.comment, size: 40, color: Colors.teal),
-                        onPressed: () {},
+                        icon: Icon(Icons.email, size: 40, color: Colors.teal),
+                        onPressed: () {
+                          // فتح الإيميل أو صفحة التواصل
+                        },
                       ),
                     ],
                   ),
                 ),
-                Positioned(
-                  top: -28,
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.teal,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.home,
-                      size: 34,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
               ],
-            ),
+            )
           ],
         ),
       ),
