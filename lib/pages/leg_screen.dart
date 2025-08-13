@@ -117,185 +117,364 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1CB5A3),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0A2152)),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
         title: Text(
           widget.categoryTitle.tr(),
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF0A2152),
+            fontSize: 24,
+          ),
         ),
-        centerTitle: true,
+        actions: [
+          Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.filter_list, color: Color(0xFF0A2152)),
+              onPressed: () {},
+            ),
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFF1CB5A3)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      onChanged: filterSearch,
-                      decoration:  InputDecoration(
-                        hintText: 'Search...'.tr(),
-                        border: InputBorder.none,
+      body: Column(
+        children: [
+          // Search and Filter Section
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                // Search Bar
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: TextField(
+                    controller: searchController,
+                    onChanged: filterSearch,
+                    decoration: InputDecoration(
+                      hintText: 'Search products...'.tr(),
+                      hintStyle: TextStyle(color: Colors.grey.shade500),
+                      prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1CB5A3),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      filteredItems.sort((a, b) => a.name.compareTo(b.name));
-                    });
-                  },
-                  child:  Text("Sort by Name".tr(), style: TextStyle(color: Colors.white)),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:  Color(0xFF1CB5A3),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      filteredItems.sort((a, b) => a.priceRange.compareTo(b.priceRange));
-                    });
-                  },
-                  child:  Text("Sort by Price".tr(), style: TextStyle(color: Colors.white)),
+                
+                const SizedBox(height: 16),
+                
+                // Sort Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildSortButton(
+                        'Sort by Name'.tr(),
+                        Icons.sort_by_alpha,
+                        () {
+                          setState(() {
+                            filteredItems.sort((a, b) => a.name.compareTo(b.name));
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildSortButton(
+                        'Sort by Price'.tr(),
+                        Icons.attach_money,
+                        () {
+                          setState(() {
+                            filteredItems.sort((a, b) => a.priceRange.compareTo(b.priceRange));
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-
-
-            Expanded(
-              child: filteredItems.isEmpty
-                  ?  Center(child: Text("No items found!".tr(), style: TextStyle(color: Colors.grey)))
-                  : ListView.builder(
-                itemCount: filteredItems.length,
-                itemBuilder: (context, index) {
-                  final item = filteredItems[index];
-                  return Card(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 4,
-                    margin:  EdgeInsets.only(bottom: 16),
-                    child: Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
-                              item.imagePath,
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
+          ),
+          
+          // Products List
+          Expanded(
+            child: filteredItems.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: Colors.grey.shade400,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "No items found!".tr(),
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                           ),
-                           SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.name.tr(), // ← ترجمة اسم العنصر
-                                  style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                ),
-                                Text(
-                                  item.size.tr(), // ← ترجمة الحجم
-                                  style:  TextStyle(color: Colors.grey),
-                                ),
-                                Text(
-                                  item.priceRange.tr(),
-                                  style:  TextStyle(color: Colors.green),
-                                ),
-                                const SizedBox(height: 8),
-                                SizedBox(
-                                  height: 32,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF1CB5A3),
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => LegDetailsPage(item: item),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      "View Details".tr(),
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
-            ),
-          ],
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: filteredItems.length,
+                    itemBuilder: (context, index) {
+                      final item = filteredItems[index];
+                      return _buildProductCard(item, context);
+                    },
+                  ),
+          ),
+          
+          // Bottom Navigation
+          _buildBottomNavigation(context),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildSortButton(String text, IconData icon, VoidCallback onPressed) {
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.teal.shade200),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 18),
+        label: Text(
+          text,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.teal,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
-        bottomNavigationBar:Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.none,
+    );
+  }
+  
+  Widget _buildProductCard(LegItem item, BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
           children: [
+            // Product Image
             Container(
-              height: 60,
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.teal.withOpacity(0.1),
+                    Colors.transparent,
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  item.imagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            
+            const SizedBox(width: 16),
+            
+            // Product Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.home, size: 40, color: Colors.teal),
-                    onPressed: () => Navigator.pushNamed(context, "/Sign in"),
+                  Text(
+                    item.name.tr(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0A2152),
+                    ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.info, size: 40, color: Colors.teal),
-                    onPressed: () => Navigator.pushNamed(context, '/aboutus')
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      item.size.tr(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.email, size: 40, color: Colors.teal),
-                    onPressed: () {},
+                  const SizedBox(height: 8),
+                  Text(
+                    item.priceRange.tr(),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.teal,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 36,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LegDetailsPage(item: item),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        "View Details".tr(),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
           ],
-        )
-
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildBottomNavigation(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                icon: Icons.home_rounded,
+                label: 'Home',
+                onTap: () => Navigator.pushNamed(context, "/Sign in"),
+              ),
+              _buildNavItem(
+                icon: Icons.info_outline_rounded,
+                label: 'About',
+                onTap: () => Navigator.pushNamed(context, '/aboutus'),
+              ),
+              _buildNavItem(
+                icon: Icons.email_outlined,
+                label: 'Contact',
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: Colors.grey.shade600,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -308,42 +487,180 @@ class LegDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text(item.name.tr(), style:  TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF1CB5A3),
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0A2152)),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        title: Text(
+          item.name.tr(),
+          style: const TextStyle(
+            color: Color(0xFF0A2152),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(item.imagePath, height: 200),
-            const SizedBox(height: 20),
-            Text(
-              item.description,
-              style:  TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Price Range. ${item.priceRange}',
-              style:  TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1CB5A3),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            // Product Image
+            Container(
+              height: 300,
+              width: double.infinity,
+              margin: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-              onPressed: () {
-
-              },
-              child:  Text("Buy Now".tr(), style: TextStyle(fontSize: 16)),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Image.asset(
+                  item.imagePath,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
+            
+            // Product Details
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.name.tr(),
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0A2152),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      item.size.tr(),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Description',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0A2152),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    item.description,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.shade700,
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Text(
+                        'Price Range: ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        item.priceRange,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.teal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 32),
+            
+            // Buy Now Button
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              width: double.infinity,
+              height: 56,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.teal.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: Text(
+                  "Buy Now".tr(),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 32),
           ],
         ),
       ),
