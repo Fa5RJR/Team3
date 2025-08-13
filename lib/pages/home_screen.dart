@@ -1,41 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'arm_screen.dart';
-import 'gloves_screen.dart';
-import 'hand_screen.dart';
-import 'leg_screen.dart';
-import 'Aboutus.dart';
-import 'feedback.dart';
-import 'SettingsPage.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
 
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
+void main() {
+  runApp( MyApp());
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  List<Map<String, dynamic>> allItems = [
-    {
-      'label': 'Hand',
-      'image': 'assets/images/IMG-20250804-WA0030.jpg',
-    },
-    {
-      'label': 'Leg',
-      'image': 'assets/images/Screenshot 2025-08-06 021812.png',
-    },
-    {
-      'label': 'Arm',
-      'image': 'assets/images/arm.png',
-    },
-    {
-      'label': 'Gloves',
-      'image': 'assets/images/OIP.png',
-    },
+class MyApp extends StatelessWidget {
+   MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return  MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CategoryPage(categoryTitle: 'Leg'.tr(),
+    )
+    );
+  }
+}
+
+class LegItem {
+  final String imagePath;
+  final String name;
+  final String size;
+  final String description;
+  final String priceRange;
+
+  LegItem({
+    required this.imagePath,
+    required this.name,
+    required this.size,
+    required this.description,
+    required this.priceRange,
+  });
+}
+
+class CategoryPage extends StatefulWidget {
+  final String categoryTitle;
+
+   CategoryPage({super.key, required this.categoryTitle});
+
+  @override
+  State<CategoryPage> createState() => _CategoryPageState();
+}
+
+class _CategoryPageState extends State<CategoryPage> {
+  TextEditingController searchController = TextEditingController();
+
+  final List<LegItem> allItems = [
+    LegItem(
+      imagePath: 'assets/images/leg1.jpg',
+      name: 'Bionic Leg',
+      size: 'Large',
+      description: 'Advanced leg with sensors and mobility support.'
+      ,
+      priceRange: '150\$ - 300\$',
+    ),
+    LegItem(
+      imagePath: 'assets/images/leg2.jpg',
+      name: 'Waterproof Leg',
+      size: 'Medium',
+      description: 'Perfect for swimming and wet conditions.',
+      priceRange: '200\$ - 350\$',
+    ),
+    LegItem(
+      imagePath: 'assets/images/leg3.jpg',
+      name: 'Carbon Fiber Leg',
+      size: 'Small',
+      description: 'Lightweight and strong, ideal for athletes.',
+      priceRange: '250\$ - 400\$',
+    ),
+    LegItem(
+      imagePath: 'assets/images/leg4.jpg',
+      name: 'Waterproof Leg',
+      size: 'Large',
+      description: 'Lightweight and strong, ideal for athletes.',
+      priceRange: '180\$ - 320\$',
+    ),
+    LegItem(
+      imagePath: 'assets/images/leg5.jpg',
+      name: 'Carbon Fiber Leg',
+      size: 'Small',
+      description: 'Lightweight and strong, ideal for athletes.',
+      priceRange: '220\$ - 370\$',
+    ),
   ];
 
-  List<Map<String, dynamic>> filteredItems = [];
+  List<LegItem> filteredItems = [];
 
   @override
   void initState() {
@@ -43,193 +94,256 @@ class _HomeScreenState extends State<HomeScreen> {
     filteredItems = allItems;
   }
 
-  void _filterItems(String query) {
-    final result = allItems
-        .where((item) =>
-        item['label'].toString().toLowerCase().contains(query.toLowerCase()))
-        .toList();
+  void filterSearch(String query) {
+    final lowerQuery = query.toLowerCase();
+
+     final results = allItems.where((item) {
+      final name = item.name.tr().toLowerCase();
+      final size = item.size.tr().toLowerCase();
+      final description = item.description.tr().toLowerCase();
+
+      return name.contains(lowerQuery) ||
+          size.contains(lowerQuery) ||
+          description.contains(lowerQuery);
+    }).toList();
 
     setState(() {
-      filteredItems = result;
+      filteredItems = results;
     });
   }
 
-  void _navigateToScreen(String label) {
-    switch (label) {
-      case 'Hand':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HandPage(categoryTitle: label),
-          ),
-        );
-        break;
-      case 'Leg':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CategoryPage(categoryTitle: label),
-          ),
-        );
-        break;
-      case 'Arm':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ArmPage(categoryTitle: label),
-          ),
-        );
-        break;
-      case 'Gloves':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GlovesPage(categoryTitle: label),
-          ),
-        );
-        break;
-    }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF1CB5A3),
+        title: Text(
+          widget.categoryTitle.tr(),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFF1CB5A3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.search, color: Colors.grey),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: filterSearch,
+                      decoration:  InputDecoration(
+                        hintText: 'Search...'.tr(),
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1CB5A3),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      filteredItems.sort((a, b) => a.name.compareTo(b.name));
+                    });
+                  },
+                  child:  Text("Sort by Name".tr(), style: TextStyle(color: Colors.white)),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:  Color(0xFF1CB5A3),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      filteredItems.sort((a, b) => a.priceRange.compareTo(b.priceRange));
+                    });
+                  },
+                  child:  Text("Sort by Price".tr(), style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+
+            Expanded(
+              child: filteredItems.isEmpty
+                  ?  Center(child: Text("No items found!".tr(), style: TextStyle(color: Colors.grey)))
+                  : ListView.builder(
+                itemCount: filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = filteredItems[index];
+                  return Card(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 4,
+                    margin:  EdgeInsets.only(bottom: 16),
+                    child: Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.asset(
+                              item.imagePath,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                           SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.name.tr(), // ← ترجمة اسم العنصر
+                                  style:  TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                                Text(
+                                  item.size.tr(), // ← ترجمة الحجم
+                                  style:  TextStyle(color: Colors.grey),
+                                ),
+                                Text(
+                                  item.priceRange.tr(),
+                                  style:  TextStyle(color: Colors.green),
+                                ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  height: 32,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF1CB5A3),
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => LegDetailsPage(item: item),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      "View Details".tr(),
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+        bottomNavigationBar:Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.home, size: 40, color: Colors.teal),
+                    onPressed: () => Navigator.pushNamed(context, "/Sign in"),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.info, size: 40, color: Colors.teal),
+                    onPressed: () => Navigator.pushNamed(context, '/aboutus')
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.email, size: 40, color: Colors.teal),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+          ],
+        )
+
+    );
   }
+}
+
+class LegDetailsPage extends StatelessWidget {
+  final LegItem item;
+
+  const LegDetailsPage({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: Text(
-          "SANAD".tr(),
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-          actions: [
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'settings') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Setting()),
-                  );
-                } else if (value == 'logout') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'settings',
-                  child: Text('Settings'.tr()),
-                ),
-
-              ],
-            )
-          ]
+        title: Text(item.name.tr(), style:  TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF1CB5A3),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Container(
-        color: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search...'.tr(),
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onChanged: _filterItems,
-              ),
+            Image.asset(item.imagePath, height: 200),
+            const SizedBox(height: 20),
+            Text(
+              item.description,
+              style:  TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
             ),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                padding: EdgeInsets.all(16),
-                childAspectRatio: 0.8,
-                children: filteredItems.map((item) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      _navigateToScreen(item['label'].toString());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: EdgeInsets.all(8),
-                    ),
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
-                              item['image'],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          item['label'].toString().tr(),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
+            const SizedBox(height: 10),
+            Text(
+              'Price Range. ${item.priceRange}',
+              style:  TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1CB5A3),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
 
-            /////////////
-
-
-            Stack(
-              alignment: Alignment.center,
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.home, size: 40, color: Colors.teal),
-                        onPressed: () => Navigator.pushNamed(context, "/Sign in"),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.info, size: 40, color: Colors.teal),
-                        onPressed: () {
-                          // فتح صفحة About Us
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.email, size: 40, color: Colors.teal),
-                        onPressed: () {
-                          // فتح الإيميل أو صفحة التواصل
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )
+              },
+              child:  Text("Buy Now".tr(), style: TextStyle(fontSize: 16)),
+            ),
           ],
         ),
       ),
