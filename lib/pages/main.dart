@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:sbs/pages/Aboutus.dart';
+import 'package:sbs/pages/feedback.dart';
 import 'home.dart';
 import 'signup.dart';
 import 'signin.dart';
 import 'page1.dart';
 import 'home_screen.dart';
+import 'SettingsPage.dart';
+import 'feedback.dart';
+import 'Aboutus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -76,10 +81,16 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const HomePage(),
           '/signup': (context) => const Signup(),
             '/signin': (context) => const LoginScreen(),
+            // buttom bar
             '/Sign in': (context) =>  HomeScreen(),
+            '/settings': (context) => Setting(),
+           // '/feedback': (context) => FeedbackPage(),
+            '/aboutus' : (context) => about(),
+
           },
         );
       },
     );
   }
 }
+////'/home' LLLLOOOOOOGGGG OOUUUTT
