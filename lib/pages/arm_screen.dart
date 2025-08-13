@@ -242,63 +242,36 @@ class _ArmPageState extends State<ArmPage> {
           ],
         ),
       ),
-      bottomNavigationBar: Stack(
-        alignment: Alignment.center,
-        clipBehavior: Clip.none,
-        children: [
-          Container(
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.person, size: 40, color: Colors.teal),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.save, size: 40, color: Colors.teal),
-                  onPressed: () {},
-                ),
-                const SizedBox(width: 60),
-                IconButton(
-                  icon: Icon(Icons.settings, size: 40, color: Colors.teal),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.comment, size: 40, color: Colors.teal),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: -28,
-            child: Container(
-              padding: const EdgeInsets.all(10),
+        bottomNavigationBar:Stack(
+          alignment: Alignment.center,
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              height: 60,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.teal,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
+                color: Colors.white,
+                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.home, size: 40, color: Colors.teal),
+                    onPressed: () => Navigator.pushNamed(context, "/Sign in"),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.info, size: 40, color: Colors.teal),
+                    onPressed: () => Navigator.pushNamed(context, "/aboutus"),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.person, size: 40, color: Colors.teal),
+                    onPressed: () => Navigator.pushNamed(context, ""),
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.home,
-                size: 34,
-                color: Colors.white,
-              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        )
 
     );
   }
